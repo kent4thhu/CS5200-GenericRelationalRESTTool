@@ -5,9 +5,25 @@ require('./db')();
 var tables = {};
 app.get('/api/:table', findTable);
 app.post('/api/:table', createInsertTable)
+app.get('/api/:table/:id', findTableById);
+
+function findTableById(req, res){
+    const table = req.params.table;
+    const id = req.params.id;
+
+    // Check if this table is in the tables collections
+    if (table in tables){
+        mongoose.model(table, tables[table]).findById(id).then(function (t){
+            res.json(t);
+        });
+    }
+    else{
+        res.json();
+    }
+}
 
 function findTable(req, res) {
-    var table = req.params.table;
+    const table = req.params.table;
     // Check if this table is in the tables collections
     if (table in tables){
         res.json(table);
