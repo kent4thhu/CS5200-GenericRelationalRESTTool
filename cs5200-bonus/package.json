@@ -1,11 +1,10 @@
 {
   "name": "cs5200-bonus",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
-   "start": "node server.js", "test": "echo \"Error: no test specified\" && exit 1"
- },
+ "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "author": "Kuai Hu",
   "license": "ISC",
   "dependencies": {
@@ -13,5 +12,7 @@
     "express": "^4.16.4",
     "mongoose": "^5.4.0",
     "node.js": "0.0.0"
-  }
+  },
+  "devDependencies": {},
+  "description": ""
 }
