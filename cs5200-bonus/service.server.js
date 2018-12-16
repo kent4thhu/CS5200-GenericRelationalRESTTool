@@ -1,13 +1,12 @@
 var app = require('./express');
-require('./db');
 const mongoose = require('mongoose');
+require('./db')();
 
 var tables = {};
 app.get('/api/:table', findTable);
 app.post('/api/:table', createInsertTable)
 
 function findTable(req, res) {
-    console.log('entering findTable');
     var table = req.params.table;
     // Check if this table is in the tables collections
     if (table in tables){
@@ -16,26 +15,50 @@ function findTable(req, res) {
     else{
         res.json();
     }
+    console.log('Finishing findTable');
 }
 
 
 function createInsertTable(req, res){
     var table_body = req.body;
     var table_name = req.params.table;
+    var table_model = undefined;
 
     // Check if there exist such a table
     if (table_name in tables) {
-        const table_model = mongoose.model(table_name + 'Model', tables[table_name]);
+        table_model = mongoose.model(table_name, tables[table_name]);
     }
-    else{
-        attributes = {};
-        for (attr in table_body){
-            attributes[attr] = typeof attr;
+
+    attributes = {};
+    for (attr in table_body){
+        if (typeof attr == 'string'){
+            attributes[attr] = {type: String, default: null};
         }
-        const table_schema = mongoose.Schema(attributes);
-        tables[table_name] = table_schema;
-        mongoose.model('', table_schema).create(table_body);
-        res.json(table_body);
+        else if (typeof attr == 'date'){
+            attributes[attr] = {type: Date, default: null};
+        }
+
+        else if (typeof attr == 'number'){
+            attributes[attr] = {type: Number, default: null};
+        }
+
+        if (typeof table_model != 'undefined' && !(attr in table_model.schema.paths)){
+            table_model.schema.add(attributes[attr]);
+            tables[table_name].add(attributes[attr]);
+        }
     }
+
+    if (typeof table_model == 'undefined'){
+        const table_schema = mongoose.Schema(attributes);
+        table_model = mongoose.model(table_name, table_schema);
+        tables[table_name] = table_schema;
+    }
+
+    table_model.create(table_body, function (err){
+        console.log(err);
+    });
+
+    res.json(table_body);
+
     console.log("Finishing createInsertTable");
 }
