@@ -2,7 +2,7 @@ var app = require('./express');
 const mongoose = require('mongoose');
 require('./db')();
 
-var tables = {};
+var tables = {};        // Collections to store the table name and its corresponding schema
 app.get('/api/:table', findTable);
 app.post('/api/:table', createInsertTable)
 app.get('/api/:table/:id', findTableById);
@@ -15,6 +15,7 @@ function removeRecordById(req, res){
     const id = req.params.id;
 
     if (table in tables){
+        // Delete records with the target id
         mongoose.model(table, tables[table]).deleteMany({id: id}).then(function (t) {
             if (typeof t == 'undefined'){
                 res.json();
@@ -33,6 +34,7 @@ function removeRecordById(req, res){
 
 function truncateTable(req, res){
     const table = req.params.table;
+    // Truncate the collections
     mongoose.model(table, tables[table]).remove({},function (err){
         console.log(err);
     });
@@ -94,6 +96,7 @@ function createInsertTable(req, res){
         table_model = mongoose.model(table_name, tables[table_name]);
     }
 
+    // Extract the fields from the body of the request
     attributes = {};
     for (attr in table_body){
         if (typeof attr == 'string'){
@@ -107,6 +110,7 @@ function createInsertTable(req, res){
             attributes[attr] = {type: Number, default: null};
         }
 
+        // Update the schema when there is new field comes in
         if (typeof table_model != 'undefined' && !(attr in table_model.schema.paths)){
             const new_attribute = {};
             new_attribute[attr] = attributes[attr];
@@ -115,6 +119,7 @@ function createInsertTable(req, res){
         }
     }
 
+    // If this is a new table
     if (typeof table_model == 'undefined'){
         const table_schema = mongoose.Schema(attributes);
         table_model = mongoose.model(table_name, table_schema);
