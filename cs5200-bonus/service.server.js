@@ -17,7 +17,7 @@ function removeRecordById(req, res){
     if (table in tables){
         // Delete records with the target id
         mongoose.model(table, tables[table]).deleteMany({id: id}).then(function (t) {
-            if (typeof t == 'undefined'){
+            if (typeof t == 'undefined' || t == ""){
                 res.json();
             }
             else{
@@ -77,7 +77,9 @@ function findTable(req, res) {
     const table = req.params.table;
     // Check if this table is in the tables collections
     if (table in tables){
-        res.json(table);
+        mongoose.model(table, tables[table]).find().then(function (records){
+            res.json(records);
+        })
     }
     else{
         res.json();
@@ -121,14 +123,14 @@ function createInsertTable(req, res){
 
     // If this is a new table
     if (typeof table_model == 'undefined'){
+        console.log(attributes);
         const table_schema = mongoose.Schema(attributes);
         table_model = mongoose.model(table_name, table_schema);
         tables[table_name] = table_schema;
     }
 
-    table_model.create(table_body);
-
-    res.json(table_body);
-
+    table_model.create(table_body).then(function (record){
+        res.json(record);
+    });
     console.log("Finishing createInsertTable");
 }
