@@ -6,6 +6,24 @@ var tables = {};
 app.get('/api/:table', findTable);
 app.post('/api/:table', createInsertTable)
 app.get('/api/:table/:id', findTableById);
+app.put('/api/:table/:id', updateRecordById);
+
+function updateRecordById(req, res){
+    const table = req.params.table;
+    const id = req.params.id;
+    const body = req.body;
+
+    // Check if this table is in the tables collections
+    if (table in tables){
+        mongoose.model(table, tables[table]).findById(id).then(function (t){
+            req.body = body;
+            createInsertTable(req, res);
+        });
+    }
+    else{
+        res.json();
+    }
+}
 
 function findTableById(req, res){
     const table = req.params.table;
@@ -14,7 +32,7 @@ function findTableById(req, res){
     // Check if this table is in the tables collections
     if (table in tables){
         mongoose.model(table, tables[table]).findById(id).then(function (t){
-            res.json(t);
+            req.body = t;
         });
     }
     else{
@@ -59,8 +77,10 @@ function createInsertTable(req, res){
         }
 
         if (typeof table_model != 'undefined' && !(attr in table_model.schema.paths)){
-            table_model.schema.add(attributes[attr]);
-            tables[table_name].add(attributes[attr]);
+            const new_attribute = {};
+            new_attribute[attr] = attributes[attr];
+            table_model.schema.add(new_attribute);
+            tables[table_name].add(new_attribute);
         }
     }
 
@@ -70,9 +90,7 @@ function createInsertTable(req, res){
         tables[table_name] = table_schema;
     }
 
-    table_model.create(table_body, function (err){
-        console.log(err);
-    });
+    table_model.create(table_body);
 
     res.json(table_body);
 
