@@ -7,6 +7,37 @@ app.get('/api/:table', findTable);
 app.post('/api/:table', createInsertTable)
 app.get('/api/:table/:id', findTableById);
 app.put('/api/:table/:id', updateRecordById);
+app.delete('/api/:table/:id', removeRecordById);
+app.delete('/api/:table', truncateTable);
+
+function removeRecordById(req, res){
+    const table = req.params.table;
+    const id = req.params.id;
+
+    if (table in tables){
+        mongoose.model(table, tables[table]).deleteMany({id: id}).then(function (t) {
+            if (typeof t == 'undefined'){
+                res.json();
+            }
+            else{
+                res.sendStatus(200);
+            }
+        }, function (err) {
+            res.send(err);
+        });
+    }
+    else{
+        res.json();
+    }
+}
+
+function truncateTable(req, res){
+    const table = req.params.table;
+    mongoose.model(table, tables[table]).remove({},function (err){
+        console.log(err);
+    });
+    res.json();
+}
 
 function updateRecordById(req, res){
     const table = req.params.table;
