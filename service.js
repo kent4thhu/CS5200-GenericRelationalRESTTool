@@ -173,6 +173,8 @@ function findRelationsForTables(req, res){
         });
     }
 
+    console.log(ids);
+    console.log(condition);
     mongoose.model(table2, tables[table2]).find({'_id': {$in: ids}}).then(function (records){
         res.json(records);
     });
@@ -227,10 +229,28 @@ function removeRelationsForTables(req, res){
     conditions[table1] = id1;
     conditions[table2] = id2;
     if (relation_table2 in relations){
-        mongoose.model(relation_table2, relations[relation_table2]).deleteMany(conditions);
+        mongoose.model(relation_table2, relations[relation_table2]).deleteMany(conditions).then(function (t) {
+            if (typeof t == 'undefined' || t == ""){
+                res.json(t);
+            }
+            else{
+                res.sendStatus(200);
+            }
+        }, function (err) {
+            res.send(err);
+        });
     }
     if (relation_table1 in relations){
-        mongoose.model(relation_table1, relations[relation_table1]).deleteMany(conditions);
+        mongoose.model(relation_table1, relations[relation_table1]).deleteMany(conditions).then(function (t) {
+            if (typeof t == 'undefined' || t == ""){
+                res.json(t);
+            }
+            else{
+                res.sendStatus(200);
+            }
+        }, function (err) {
+            res.send(err);
+        });
     }
 }
 
@@ -244,9 +264,27 @@ function removeRelationsForOneTable(req, res){
     var conditions = {};
     conditions[table1] = id;
     if (relation_table2 in relations){
-        mongoose.model(relation_table2, relations[relation_table2]).deleteMany(conditions);
+        mongoose.model(relation_table2, relations[relation_table2]).deleteMany(conditions).then(function (t) {
+            if (typeof t == 'undefined' || t == ""){
+                res.json(t);
+            }
+            else{
+                res.sendStatus(200);
+            }
+        }, function (err) {
+            res.send(err);
+        });
     }
     if (relation_table1 in relations){
-        mongoose.model(relation_table1, relations[relation_table1]).deleteMany(conditions);
+        mongoose.model(relation_table1, relations[relation_table1]).deleteMany(conditions).then(function (t) {
+            if (typeof t == 'undefined' || t == ""){
+                res.json(t);
+            }
+            else{
+                res.sendStatus(200);
+            }
+        }, function (err) {
+            res.send(err);
+        });
     }
 }
