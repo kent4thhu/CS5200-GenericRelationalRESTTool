@@ -172,7 +172,7 @@ function findRelationsForTables(req, res){
         });
     }
     console.log(ids);
-    mongoose.model(table2, tables[table2]).find({'id': {$in: res}}).then(function (records){
+    mongoose.model(table2, tables[table2]).find({'id': {$in: ids}}).then(function (records){
         res.json(records);
     });
 }
