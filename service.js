@@ -13,6 +13,8 @@ app.delete('/api/:table', truncateTable);
 var relations = {};        // Collections to store the relations between tables
 app.post('/api/:table1/:id1/:table2/:id2', createRelationTable);
 app.get('/api/:table1/:id/:table2', findRelationsForTables);
+app.delete('api/:table1/:id2/:table2/:id2', removeRelationsForTables);
+app.delete('api/:table1/:id/:table2', removeRelationsForOneTable);
 
 function removeRecordById(req, res){
     const table = req.params.table;
@@ -146,17 +148,17 @@ function findRelationsForTables(req, res){
     const relation_table1 = table1 + "s_" + table2;
     const relation_table2 = table2 + "s_" + table1;
 
-    // if (!(table2 in tables)){
-    //     res.json();
-    //     return;
-    // }
-    console.log('-----------');
+    if (!(table2 in tables)){
+        res.json();
+        return;
+    }
+
+    // Fetch ids for table2 that has relations with table1 with the specific id
     var ids = [];
     var condition = {};
     condition[table1] = id;
     if (relation_table2 in relations){
         mongoose.model(relation_table2, relations[relation_table2]).find(condition, {table2}).then(function (records){
-            console.log(records);
             for (const record in records){
                 ids.push(record);
             }
@@ -165,14 +167,13 @@ function findRelationsForTables(req, res){
 
     if (relation_table1 in relations){
         mongoose.model(relation_table1, relations[relation_table1]).find(condition, {table2}).then(function (records){
-            console.log(records);
             for (const record in records){
                 ids.push(record);
             }
         });
     }
-    console.log(ids);
-    mongoose.model(table2, tables[table2]).find({'id': {$in: ids}}).then(function (records){
+
+    mongoose.model(table2, tables[table2]).find({'_id': {$in: ids}}).then(function (records){
         res.json(records);
     });
 }
@@ -212,4 +213,40 @@ function createRelationTable(req, res){
     relation_model.create(pairs).then(function (t){
         res.json(t);
     });
+}
+
+function removeRelationsForTables(req, res){
+    const table1 = req.params.table1;
+    const table2 = req.params.table2;
+    const id1 = req.params.id1;
+    const id2 = req.params.id2;
+    const relation_table1 = table1 + "s_" + table2;
+    const relation_table2 = table2 + "s_" + table1;
+
+    var conditions = {};
+    conditions[table1] = id1;
+    conditions[table2] = id2;
+    if (relation_table2 in relations){
+        mongoose.model(relation_table2, relations[relation_table2]).deleteMany(conditions);
+    }
+    if (relation_table1 in relations){
+        mongoose.model(relation_table1, relations[relation_table1]).deleteMany(conditions);
+    }
+}
+
+function removeRelationsForOneTable(req, res){
+    const table1 = req.params.table1;
+    const table2 = req.params.table2;
+    const id = req.params.id;
+    const relation_table1 = table1 + "s_" + table2;
+    const relation_table2 = table2 + "s_" + table1;
+
+    var conditions = {};
+    conditions[table1] = id;
+    if (relation_table2 in relations){
+        mongoose.model(relation_table2, relations[relation_table2]).deleteMany(conditions);
+    }
+    if (relation_table1 in relations){
+        mongoose.model(relation_table1, relations[relation_table1]).deleteMany(conditions);
+    }
 }
