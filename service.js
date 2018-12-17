@@ -152,7 +152,8 @@ function findRelationsForTables(req, res){
     }
     console.log('-----------');
     var ids = [];
-    const condition = {table1: id};
+    const condition = {};
+    condition[table1] = id;
     if (relation_table2 in relations){
         mongoose.model(relation_table2, relations[relation_table2]).find(condition, {table2}).then(function (records){
             for (const record in records){
