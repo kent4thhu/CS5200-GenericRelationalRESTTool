@@ -152,8 +152,9 @@ function findRelationsForTables(req, res){
     }
     console.log('-----------');
     var ids = [];
+    const condition = {table1: id};
     if (relation_table2 in relations){
-        mongoose.model(relation_table2, relations[relation_table2]).find({table1:id}, {table2}).then(function (records){
+        mongoose.model(relation_table2, relations[relation_table2]).find(condition, {table2}).then(function (records){
             for (const record in records){
                 ids.push(record);
             }
@@ -161,7 +162,7 @@ function findRelationsForTables(req, res){
     }
 
     if (relation_table1 in relations){
-        mongoose.model(relation_table1, relations[relation_table1]).find({table1:id}, {table2}).then(function (records){
+        mongoose.model(relation_table1, relations[relation_table1]).find(condition, {table2}).then(function (records){
             for (const record in records){
                 ids.push(record);
             }
