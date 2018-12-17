@@ -160,7 +160,9 @@ function findRelationsForTables(req, res){
     if (relation_table2 in relations){
         mongoose.model(relation_table2, relations[relation_table2]).find(condition, {table2}).then(function (records){
             for (const record in records){
+                console.log(record);
                 ids.push(record);
+                console.log(ids);
             }
         });
     }
