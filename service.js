@@ -13,8 +13,8 @@ app.delete('/api/:table', truncateTable);
 var relations = {};        // Collections to store the relations between tables
 app.post('/api/:table1/:id1/:table2/:id2', createRelationTable);
 app.get('/api/:table1/:id/:table2', findRelationsForTables);
-app.delete('api/:table1/:id1/:table2/:id2', removeRelationsForTables);
-app.delete('api/:table1/:id/:table2', removeRelationsForOneTable);
+app.delete('/api/:table1/:id1/:table2/:id2', removeRelationsForTables);
+app.delete('/api/:table1/:id/:table2', removeRelationsForOneTable);
 
 function removeRecordById(req, res){
     const table = req.params.table;
