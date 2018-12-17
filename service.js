@@ -20,13 +20,14 @@ function removeRecordById(req, res){
     const table = req.params.table;
     const id = req.params.id;
 
-    if (table in tables){
+    if (table in tables) {
         // Delete records with the target id
-        mongoose.model(table, tables[table]).deleteMany({id: id},function(error, writeOpResult) {
-            if (error){
+        mongoose.model(table, tables[table]).deleteMany({id: id}, function (error, writeOpResult) {
+            if (error) {
                 return res.json();
             }
             res.sendStatus(200);
+        });
     }
     else{
         res.json();
