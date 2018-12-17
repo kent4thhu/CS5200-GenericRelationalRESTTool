@@ -52,7 +52,7 @@ function updateRecordById(req, res){
 
     // Check if this table is in the tables collections
     if (table in tables){
-        mongoose.model(table, tables[table]).findById(id).then(function (t){
+        mongoose.model(table, tables[table]).find({'id': id}).then(function (t){
             req.body = body;
             createInsertTable(req, res);
         });
@@ -68,7 +68,7 @@ function findTableById(req, res){
 
     // Check if this table is in the tables collections
     if (table in tables){
-        mongoose.model(table, tables[table]).findById(id).then(function (t){
+        mongoose.model(table, tables[table]).find({'id':id}).then(function (t){
             req.body = t;
         });
     }
@@ -168,7 +168,7 @@ function findRelationsForTables(req, res){
         });
     }
 
-    mongoose.model(table2, tables[table2]).find({'_id': {$in: res}}).then(function (records){
+    mongoose.model(table2, tables[table2]).find({'id': {$in: res}}).then(function (records){
         res.json(records);
     });
 }
