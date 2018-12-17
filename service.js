@@ -47,11 +47,14 @@ function updateRecordById(req, res){
     const table = req.params.table;
     const id = req.params.id;
     const body = req.body;
+    body[id]= id;
 
     // Check if this table is in the tables collections
     if (table in tables){
         mongoose.model(table, tables[table]).find({'id': id}).then(function (t){
-            console.log("--------------",t);
+            if (t.length == 0){
+                return res.json();
+            }
             req.body = body;
             createInsertTable(req, res);
         });
