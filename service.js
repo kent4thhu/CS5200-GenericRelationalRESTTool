@@ -22,9 +22,9 @@ function removeRecordById(req, res){
 
     if (table in tables){
         // Delete records with the target id
-        mongoose.model(table, tables[table]).deleteMany({id: id}).then(function (t) {
-            if (typeof t == 'undefined' || t == ""){
-                res.json(t);
+        mongoose.model(table, tables[table]).deleteMany({id: id},function(error, writeOpResult) {
+            if (error){
+                res.json();
             }
             else{
                 res.sendStatus(200);
