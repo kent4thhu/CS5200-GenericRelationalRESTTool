@@ -146,16 +146,17 @@ function findRelationsForTables(req, res){
     const relation_table1 = table1 + "s_" + table2;
     const relation_table2 = table2 + "s_" + table1;
 
-    if (!(table2 in tables)){
-        res.json();
-        return;
-    }
+    // if (!(table2 in tables)){
+    //     res.json();
+    //     return;
+    // }
     console.log('-----------');
     var ids = [];
-    const condition = {};
+    var condition = {};
     condition[table1] = id;
     if (relation_table2 in relations){
         mongoose.model(relation_table2, relations[relation_table2]).find(condition, {table2}).then(function (records){
+            console.log(records);
             for (const record in records){
                 ids.push(record);
             }
@@ -164,6 +165,7 @@ function findRelationsForTables(req, res){
 
     if (relation_table1 in relations){
         mongoose.model(relation_table1, relations[relation_table1]).find(condition, {table2}).then(function (records){
+            console.log(records);
             for (const record in records){
                 ids.push(record);
             }
