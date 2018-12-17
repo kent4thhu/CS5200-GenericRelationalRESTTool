@@ -24,14 +24,9 @@ function removeRecordById(req, res){
         // Delete records with the target id
         mongoose.model(table, tables[table]).deleteMany({id: id},function(error, writeOpResult) {
             if (error){
-                res.json();
+                return res.json();
             }
-            else{
-                res.sendStatus(200);
-            }
-        }, function (err) {
-            res.send(err);
-        });
+            res.sendStatus(200);
     }
     else{
         res.json();
