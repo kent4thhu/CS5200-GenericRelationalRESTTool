@@ -6,8 +6,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const port = process.env.PORT || 8080;
-require('./service.oneTable');
-require('./service.twoTables');
+require('./service');
+
 app.listen(port);
 
 console.log('successfully start the server with ', port);
