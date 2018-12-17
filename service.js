@@ -150,7 +150,7 @@ function findRelationsForTables(req, res){
         res.json();
         return;
     }
-
+    console.log('-----------');
     var ids = [];
     if (relation_table2 in relations){
         mongoose.model(relation_table2, relations[relation_table2]).find({table1:id}, {table2}).then(function (records){
@@ -167,7 +167,7 @@ function findRelationsForTables(req, res){
             }
         });
     }
-
+    console.log(ids);
     mongoose.model(table2, tables[table2]).find({'id': {$in: res}}).then(function (records){
         res.json(records);
     });
